@@ -249,6 +249,7 @@ public class productDAO extends DBContext {
         } catch (Exception e) {
         }
     }
+   
 
     public List<Product> getTop10Product() {
         List<Product> list = new ArrayList<>();
