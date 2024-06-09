@@ -1,12 +1,16 @@
-
+<%-- 
+    Document   : category
+    Created on : Jun 9, 2024, 3:37:12 PM
+    Author     : Doanh
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
     <head>
-        <title>Danh sách đơn hàng | Quản trị Admin</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Danh sách danh mục sản phẩm | Quản trị Admin</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,9 +26,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
-
     </head>
-
     <body onload="time()" class="app sidebar-mini rtl">
         <!-- Navbar-->
         <header class="app-header">
@@ -56,7 +58,7 @@
                             class="app-menu__label">Bảng thống kê</span></a></li>
                 <li><a class="app-menu__item" href="customermanager"><i class='app-menu__icon bx bx-user-voice'></i><span
                             class="app-menu__label">Quản lý khách hàng</span></a></li>
-                <li><a class="app-menu__item" href="categorymanager"><i class='app-menu__icon bx bxs-category'></i><span
+                <li><a class="app-menu__item" href="categorymanager"><i class='app-menu__icon bx bx-user-voice'></i><span
                             class="app-menu__label">Quản lý danh mục</span></a></li>
                 <li><a class="app-menu__item" href="productmanager"><i
                             class='app-menu__icon bx bx-purchase-tag-alt'></i><span class="app-menu__label">Quản lý sản phẩm</span></a>
@@ -70,7 +72,7 @@
         <main class="app-content">
             <div class="app-title">
                 <ul class="app-breadcrumb breadcrumb side">
-                    <li class="breadcrumb-item active"><a href="#"><b>Danh sách đơn hàng</b></a></li>
+                    <li class="breadcrumb-item active"><a href="#"><b>Danh sách danh mục</b></a></li>
                 </ul>
                 <div id="clock"></div>
             </div>
@@ -83,40 +85,113 @@
                                 <a class="btn btn-delete btn-sm print-file" type="button" title="In" onclick="myApp.printTable()"><i
                                         class="fas fa-print"></i> In dữ liệu</a>
                             </div>
+                            <div>
+                                <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#adddanhmuc"><i
+                                        class="fas fa-folder-plus"></i> Thêm danh mục</a>
+                            </div>
                         </div>
                         <table class="table table-hover table-bordered" id="sampleTable">
                             <thead>
                                 <tr>
-                                    <th>ID đơn hàng</th>
-                                    <th>Khách hàng</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Ngày mua</th>
-                                    <th>Tổng tiền</th>
-                                    <th>Thanh Toán</th>
+                                    <th>ID danh mục</th>
+                                    <th>Tên danh mục</th>
                                     <th>Chức năng</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${bill}" var="b">
+                                <c:forEach items="${category}" var="c">
                                     <tr>
-                                        <td>${b.bill_id}</td>
-                                        <td>${b.user.user_name}</td>
-                                        <td>(+84)${b.phone}</td>
-                                        <td>${b.address}</td>
-                                        <td>${b.date}</td>
-                                        <td>${b.total}</td>
-                                        <td><span class="badge bg-success">${b.payment}</span></td>                                  
-                                        <td><a style=" color: white;background-color: red; padding: 5px;border-radius: 5px;" href="ordermanager?action=showdetail&bill_id=${b.bill_id}"><i class="fa"></i>Hiển thị đơn hàng</a></td>
+                                        <td>${c.category_id}</td>
+                                        <td>${c.category_name}</td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm edit" type="button" data-toggle="modal" data-target="#ModalEditCategory${c.category_id}" title="Sửa"><i class="fas fa-edit">Chỉnh sửa danh mục</i></button>
+                                            <button class="btn btn-primary btn-sm trash" type="button" title="xóa" value="${c.category_id}">
+                                                <i class="fas fa-edit">Xóa danh mục</i></button></td>
+                                            
                                     </tr>
+                                     <div class="modal fade" id="ModalEditCategory${c.category_id}" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <form action="categorymanager" method="POST">
+                                                        <input type="hidden" name="action" value="updatecategory">
+                                                        <div class="row">
+                                                            <div class="form-group col-md-12">
+                                                                <span class="thong-tin-thanh-toan">
+                                                                    <h5>Chỉnh sửa danh mục</h5>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-md-12">
+                                                                <label class="control-label">ID</label>
+                                                                <input class="form-control" type="text" readonly name="category_id" value="${c.category_id}">
+                                                            </div>
+                                                            <div class="form-group col-md-12">
+                                                                <label class="control-label">Tên danh mục</label>
+                                                                <input class="form-control" type="text" name="category_name" value="${c.category_name}">
+                                                            </div>
+                                                        </div>
+                                                        <button class="btn btn-save" type="submit">Lưu lại</button>
+                                                        <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </c:forEach>
                             </tbody>
+                            
+
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
+
+
+
+    <div class="modal fade" id="adddanhmuc" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group  col-md-12">
+                            <span class="thong-tin-thanh-toan">
+                                <h5>Thêm mới danh mục </h5>
+                            </span>
+                        </div>
+
+                        <div class="form-group col-md-12" >
+
+                            <h2 style="color: red; padding-left: 10px">
+                                ${error}</h2>
+                            <label class="control-label">Nhập tên danh mục mới</label>
+                            <form action="productmanager?action=insertcategory" method="post"> 
+                                <input class="form-control" type="text" name="name" required>
+                                <br>
+                                <button class="btn btn-save" type="submit">Lưu lại</button>
+                                <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+                            </form>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label class="control-label">Danh mục sản phẩm hiện đang có</label>
+                            <ul style="padding-left: 20px;">
+                                <c:forEach items="${CategoryData}" var="cat">
+                                    <li>${cat.category_name}</li>
+                                    </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Essential javascripts for application to work-->
     <script src="admin/js/jquery-3.2.1.min.js"></script>
     <script src="admin/js/popper.min.js"></script>
@@ -132,6 +207,30 @@
     <script type="text/javascript" src="admin/js/plugins/dataTables.bootstrap.min.js"></script>
     <script type="text/javascript">$('#sampleTable').DataTable();</script>
     <script>
+
+        function deleteRow(r) {
+            var i = r.parentNode.parentNode.rowIndex;
+            document.getElementById("myTable").deleteRow(i);
+        }
+        jQuery(function () {
+            jQuery(".trash").click(function () {
+                swal({
+                    title: "Cảnh báo",
+
+                    text: "Bạn có chắc chắn là muốn xóa danh mục này?",
+                    buttons: ["Hủy bỏ", "Đồng ý"],
+                })
+                        .then((willDelete) => {
+                            if (willDelete) {
+                                window.location = "categorymanager?action=delete&category_id=" + $(this).attr("value");
+                                swal("Đã xóa thành công.!", {
+
+                                });
+                            }
+                        });
+            });
+        });
+
         //Thời Gian
         function time() {
             var today = new Date();
@@ -182,6 +281,7 @@
                 win.print();
             }
         }
+    
     </script>
 </body>
 
